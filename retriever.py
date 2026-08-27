@@ -11,16 +11,30 @@ class hybridRetriever:
         #Setup Chromadb vector client
         #create instance of chromadb and create a collection[table or index]
         self.client = chromadb.Client()
-        self.collection  = client.get_or_create_collection(name=collection_name)
+        self.collection  = self.client.get_or_create_collection(name=collection_name)
 
 
         #attributes for BM25 sparse search
         self.documents = []
         self.bm25 = None
 
-    def ingest_documents(self):
-        pass
+    def ingest_documents(self,docs):
+        self.documents = docs
 
+        #ingest into bm25 (sparse)
+        tokenize_spa = [doc.lower().split() for doc in docs]
+        self.bm25 = BM25Okapi(tokenize_spa)
+
+        #create unique id for doc
+        doc_ids = [f"doc_{i}" for i in range(len(docs))]
+
+        #ingest into Chromadb (dense)
+        embedding_vector = self.model.encode(docs).tolist()
+        self.collection.add(
+            ids=doc_ids,
+            embeddings=embedding_vector,
+            documents=docs
+        )
     def dense_search(self):
         pass
     

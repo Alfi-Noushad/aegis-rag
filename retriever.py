@@ -1,7 +1,7 @@
 from sentence_transformers import SentenceTransformer
 import chromadb
 from rank_bm25 import BM25Okapi
-
+import numpy as np
 
 class hybridRetriever:
     def __init__(self,collection_name="enterprise_docs"):
@@ -35,10 +35,31 @@ class hybridRetriever:
             embeddings=embedding_vector,
             documents=docs
         )
-    def dense_search(self):
-        pass
-    
-    def sparse_search(self):
-        pass
+    def dense_search(self,query,top_k=5):
+        #encode query to vector
+        query_vector = self.model.encode(query).tolist()
+        result = self.collection.query(
+            query_embeddings= [query_vector],
+            n_results=top_k
+        )
 
+        #extract top documents and distance from the nested result
+        retrived_docs = result['documents'][0]
+        distance = result['distances'][0]
+        #return as [(doc text,0.001)]
+        return list(zip(retrived_docs,distance))
     
+    def sparse_search(self,query,top_k=5):
+        #tokenize the query and get raw scoeres
+        tokenized_query = query.lower().split()
+        scores = self.bm25.get_scores(tokenized_query)
+
+        #takes the top indices
+        top_indices = np.argsort(scores)[::-1][:top_k]
+        #gets top doc & score also
+        results = []
+        for i in top_indices:
+            if scores[i] > 0:  # Ignore non-matching docs
+                results.append((self.documents[i], float(scores[i])))
+
+        return results

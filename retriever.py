@@ -39,7 +39,7 @@ class hybridRetriever:
         #encode query to vector
         query_vector = self.model.encode(query).tolist()
         result = self.collection.query(
-            query_embeddings= [query_vector],
+            query_embeddings= query_vector,
             n_results=top_k
         )
 

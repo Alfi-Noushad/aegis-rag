@@ -4,7 +4,7 @@ from sentence_transformers import SentenceTransformer
 class semanticCache:
     def __init__(self):
         self.model = SentenceTransformer("all-MiniLM-L6-v2")
-        self.threshold = 0.90
+        self.threshold = 0.80
         self.cache = []
         # {"vector": np_array, "query": str, "response": str}
     

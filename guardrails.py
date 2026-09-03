@@ -27,7 +27,7 @@ class GuardrailManager:
                 return (False, query, f"Prompt injection detected: '{keyword}'")
 
         #redacts PII
-        santized = re.sub(self.email_pattern,"[REDACTED_EMAIL]", query)
+        sanitized = re.sub(self.email_pattern,"[REDACTED_EMAIL]", query)
         sanitized = re.sub(self.phone_pattern, "[REDACTED_PHONE]", sanitized)
 
         return (True,sanitized,"input is safe..")
@@ -39,6 +39,8 @@ class GuardrailManager:
 
         if not retrieved_contexts:
             return (False, "No context available to verify response.")
+
+        combined_context = " ".join(retrieved_contexts).lower()
 
         #extract the content words
         response_words = [

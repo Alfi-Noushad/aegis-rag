@@ -1,18 +1,18 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 
-from cache import SemanticCache
+from cache import semanticCache
 from guardrails import GuardrailManager
-from reranker import ReRanker
-from retriever import HybridRetriever
+from reranker import reRanker
+from retriever import hybridRetriever
 
 #intialize the fastAPI 
 app = FastAPI(title="Production RAG Backend", version="1.0.0")
 
 #instantiate pipeline services
-retriever = HybridRetriever()
-reranker =  ReRanker()
-cache = SemanticCache()
+retriever = hybridRetriever()
+reranker =  reRanker()
+cache = semanticCache()
 guardrails = GuardrailManager()
 
 # sets up the initial document knowledge
@@ -49,7 +49,7 @@ class QueryResponse(BaseModel):
 # API endpoints
 @app.post("/ingest")
 def ingest_docs(payload: IngestRequest):
-   retriever.ingest_documents(payload)
+   retriever.ingest_documents(payload.documents)
    return{
       "status": "success",
       "ingested_count": len(payload.documents),

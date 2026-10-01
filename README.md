@@ -1,4 +1,4 @@
-# AEGIS-RAG: Production-Grade Hybrid RAG & Semantic Caching Pipeline
+# AEGIS-RAG: Hybrid RAG & Semantic Caching Pipeline
 
 A high-performance, modular Retrieval-Augmented Generation (RAG) backend engineered with two-stage hybrid search, Reciprocal Rank Fusion (RRF), Cross-Encoder reranking, vector semantic caching, and pre/post-inference guardrails.
 
